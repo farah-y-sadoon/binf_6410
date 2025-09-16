@@ -1,0 +1,24 @@
+### Lecture Two Notes
+
+## Commands learned:
+# echo - displays lines of text or strings that are passed as arguments
+echo "Hello World!"
+
+# Ctl + C - interrupt that brings the command prompt back
+
+# pwd - present working directory (tells you what directory you are working out of)
+pwd
+
+# ls - lists the contents of the specified directory (if not specified, lists contents of the current directory)
+ls /home
+ls /Friends # if you don't have a directory called friend this will result in an error message
+
+# cd - change directory - switches directory to the one passed as an argument
+cd /home/farahs/documents
+
+# .. - refers to the parent directory of the current working directory
+ls .. # list the contents of the parent directory
+cd .. # change working directory to the parent directory
+
+# ../.. - refers to grandparent directory
+# this can continue until you reach the root, after this you won't get an error message but there's no higher directory to access (for ls command)

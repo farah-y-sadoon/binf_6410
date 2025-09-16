@@ -1,0 +1,82 @@
+### Lecture 4 Notes
+
+## Moving and renaming directories
+# We renamed Temp to Temp2
+mkdir Temp
+ls -p
+mv Temp Temp2
+ls -p
+
+# Renaming directories is not the same thing as moving files
+mkdir Temp
+ls -p
+mv Temp Temp2 # this just moves Temp into Temp2
+ls -p Temp2
+
+# Use tab completion to find whether there is a directory / file that exists with that same renam
+
+
+## Class Activity
+# Make a new directory, “directory_x”
+mkdir directory_x
+# Use the touch command to add some files: “file1”, “file2”, and “file3”
+touch directory_x/file1
+touch directory_x/file2
+touch directory_x/file3
+
+# Now move “directory_x” to “directory_y”
+mv directory_x directory_y
+
+# Make another new directory, “directory_z”, and move “directory_x” into it
+mkdir directory_z
+mv directory_y/directory_x directory_z
+
+## Copy command - works like mv but cp copies files instead of moving them
+cp file1 file2
+cp file1 cp_practice/file1 # always good practice to specify when you are referring to a directory
+cp file2 cp_practice # if this directory did not exist, it would copy file1 into the existing directory and name it cp_practice
+cp file1 cp_practice/fun
+ls -tl cp_practice
+
+# you can still delete / modify existing files with copy
+touch file3
+ls -tl cp_practice
+
+cp file3 cp_practice/file1
+ls -tl cp_practice # the file order changes compared to the last time we ran this because you copied file3 and renamed it file1, erasing the original file1
+
+# can use wild card characters to cp many files
+cp *~ # copies files in working directory to home directory
+cp *.txt ~ # copies files that match the wild-card characters
+cp * ~/binf_class # copying the same files into existing directory - it will do this but it will tell you they are the same file, no changes
+
+## Recursively moving and copyin many files
+mkdir quarry
+cp -R quarry second_quarry
+ls second_quarry # there is nothing in this directory yet, make some files
+touch quarry/stone.txt quarry/big_stone.txt quarry/huge_stone.txt
+cp -R -v quarry second_quarry # -v means verbose - explains what the command is doing
+
+
+## Getting and looking at data
+nano hello.txt # creating a text file, ctl + x to save, then y
+
+nano plant_stats.csv
+plant_id,height_cm,width_cm,number_leaves
+plant_01,134,10,541
+plant_02,201,5,865
+plant_03,155,7,650
+plant_04,255,3,995
+plant_04,6,871
+
+#Ctl+X
+y
+
+# if you open this file in libreoffice or spreadsheet viewer like Excel, you can view the dataframe you made plant_stats.csv in nice columns/rows (this is because we specified .csv file)
+
+## Obtaining data from online
+wget https://ftp.ncbi.nlm.nih.gov/genomes/refseq/plant/Arabidopsis_thaliana/reference/GCF_000001735.4_TAIR10.1/GCF_000001735.4_TAIR10.1_genomic.gff.gz
+ls -l GCF_000001735.4_TAIR10_genomic.gff.gz # shows you the file size before unzipping
+
+# wc - word count
+wc GCF_000001735 .4_TAIR10_genomic.gff
