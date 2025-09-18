@@ -1,0 +1,48 @@
+### Lecture 3 Notes
+
+# mkdir - make a directory
+mkdir binf_class
+
+# -p to make a parent directory
+mkdir binf_class/UNIX_part/Start #if you try to make a directory with a name that already exists it won't let you create it
+
+# sudo - elevates the permissions of the user to execute commands that normally would not be accessible - BE CAREFUL DOING THIS, start fresh terminal after you are done using sudo
+# e.g., making a directory in the root folder
+sudo mkdir /Hello
+
+# rmdir - remove directory
+# you can delete the whole directory tree by starting at the lowest level then moving up
+rmdir binf_class/UNIX_part/Start
+rmdir binf_class/UNIX_part
+rmdir binf_class
+
+# touch - create a file
+touch binf_class/newfile
+touch binf_class/another_one
+
+# rm - remove file
+rm binf_class/newfile
+ls binf_class # you will see only another_one file exists
+
+# use option "-i" to be safe when deleting files or directories - it prompts you to ensure you are deleting the correct item
+rm -i binf_class/another_one #it will prompt you to say y or n to confirm your action
+
+# use option "-r" to recursively delete a directory, including everything within the directory and itself
+rm -r binf_class
+
+# mv - move files and rename them
+
+mkdir binf_class
+cd ~/binf_class
+touch rocks.txt
+touch stones.txt
+mkdir quarry
+mkdir stone_pile
+ls
+mv rocks.txt quarry
+mv stones.txt stone_pile/
+
+#wild card - * multiple characters
+#wild card - ? single character
+# use backslash \ to literally reference * or ?
+#wild-card - [] range of characters/letters (think of regex)
