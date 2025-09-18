@@ -1,0 +1,77 @@
+### Lecture 05 Notes
+
+## Compressing and uncompressing files
+#zless - can open and operate on compressed or uncompressed files
+
+#&& - daisychain commands
+mkdir -p lecture_04/compress && cd lecture_04 && mv ../GCF_000001735.4_TAIR10.1_genomic.gff .
+
+# head - looks at the beginning of a file
+# tail - looks at the end of a file
+# -n option that specifies the number of lines you want to include
+# > - redirects contents into a new file
+head -n 300 GCF_000001735.4_TAIR10.1_genomic.gff > compress/headfile.txt
+tail -n 300 GCF_000001735.4_TAIR10.1_genomic.gff > compress/tailfile.txt
+
+#gzip - compress a file or uncompress a file if you use -d option (equivalent to gunzip)
+
+#gzip -r compress
+
+#gzip [-cdfhkLlNnqrtVv] [-S suffix] file [file [...]]
+#-d, --decompress, --uncompress -k, --keep -r, --recursive -v, --verbose This option selects decompression rather than compression.
+#Keep (don't delete) input files during compression or decompression.
+#This option is used to gzip the files in a directory tree individually, using the fts(3) library
+#This option turns on verbose mode, which prints the compression ratio.
+
+#tar - puts together files and directories ("tape archive")
+# -c compress the file for you, you don't need to specify gzip
+# -x decompresses and extracts
+# -f write the archive to a specified files
+
+## Regular Expressions
+# grep - global regular expression print - understanding what is in a file or files and for extracting what you want or need from a file (it is like CTL + F)
+# can use grep to search fasta files for example, how many sequences there are
+
+# . (dot) = Any character
+# [ ] [^ ] \ (backslash) = Character set. A range is denoted with a “-” Match any of the characters at site.
+# = Exclude character set. Match any character which is not one of these.
+# = Escape. Remove special meaning to a character.
+
+egrep '^[3-9][.]' dates.txt # ^ outside [] means start at the beginning of the line
+egrep '^[3-9].' dates.txt # . outside the [] means look for any character after the 3-9 range
+egrep '^[3-9]\.' dates.txt # \ means interpret this literally as a period, not as a special meta-character (this is equivalent to putting [.])
+egrep '3[.]19[.]05' dates.txt
+grep -E '3.19.05' dates.txt # this differs from the above example, because the dots are telling it that it can be any character
+
+# Piping - when used inside round brackets or inside egrep command, it is interpreting the | as a separation in the command. reads as "or" (match this, or this)
+egrep '[BC]at' superheroes.txt
+egrep 'S[^u]' superheroes.txt
+echo '234235' | egrep -i '[a-z]' # nothing comes back because you piped in numbers and asked for letters between a-z
+echo '234235' | egrep '[0-9a-z]' # matches because you specified numbers and letters
+# note: grep works by row, so it highlights the match, but includes everything in the row if there is a match (if no match, then it omits the row)
+
+# Multipliers
+# * Match zero or more times.
+# + Match one or more times.
+# ? Match zero or one time.
+# {x} Match exactly x times.
+# {x,y} Match between x and y times.
+# {x,} Match at least x times.
+
+egrep '^1?[1-9]\.' dates.txt # ? is tricky because we're saying it can start with 1 or it could start with something else
+egrep '^[1-9]\.' dates.txt #differs because you're being specific about what you want it to start with, an exact match within the range given
+egrep '^1?[1-9].' dates.txt # differs because the dot is interpreted as (anything can go here)
+
+# Curly brackets
+echo '5198244120' | egrep '[0-9]{10}' # highlights all the values because it matches all 10 characters
+echo 51982441207 | egrep [0-9]{10}  # highlights every value except for the last but still includes an output
+echo 519824412 | egrep [0-9]{10} # returns nothing because there is not a series of 10 characters
+
+echo 'hellohellohello' | egrep 'hello{3}' #doesn't return anything because it is looking for 3 sequences of the character 'o', rather than 3 sequences of the word hello
+echo 'hellohellohello' | egrep '(hello){3} # use parentheses to indicate you want the entire sequence of the characters inside
+
+# the number in {} can give a minimum and maximum
+# A{10,} # interpreted as 10 or more
+# A{10,12} # interpreted as between 10 and 12 times
+
+# cat - prints contents of a file to the standard output

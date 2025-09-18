@@ -1,0 +1,7 @@
+Batman	Bruce Wayne	Hero	DC
+Catwoman	Selina Kyle	Villain	DC
+Invisible Woman	Susan Storm Richards	Hero	Marvel
+Supergirl	Linda Danvers	Hero	DC
+Superman	Clark Kent	Hero	DC
+Wonder Woman	Diana Prince	Hero	DC
+Iron Man	Tony Stark	Hero	Narvel
