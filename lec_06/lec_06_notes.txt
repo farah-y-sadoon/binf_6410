@@ -1,0 +1,26 @@
+### Lecture 06 Notes
+
+## grep - searches lines for matches in this line.
+wget https://raw.githubusercontent.com/bdaisley/BINF6410_F25/refs/heads/main/accessory_files/patterns1.txt
+cat patterns1.txt
+rep -P "\t" patterns1.txt
+grep -E "   " patterns1.txt # if you want to insert a tab, hit ctl+v first, then you can insert a tab character
+egrep -P "\t" patterns1.txt #error if you use PERL with extended regular expressions
+
+# grep options
+grep -E "   " patterns1.txt - parse pattern as extended regular expressions
+grep
+
+grep -n "there" patterns2.txt - counts the number of lines that contain your patterns
+
+egrep -v "[t]here" patterns2.txt - revert match (doesn't match your pattern)
+
+
+# using files to search in other files
+rep -f patterns3.txt patterns2.txt # searching patterns2 for matches in patterns3
+
+## sort command - sorts a file alphanumerically by line
+cat sortfile1.txt # inspect original order
+sort sortfile1.txt # sort and compare
+
+#sort options
