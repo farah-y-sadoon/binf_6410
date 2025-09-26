@@ -1,0 +1,40 @@
+#### Assignment 1
+
+## Making a directory
+cd binf_6410
+mkdir assignment_1/
+cd assignment_1/
+
+## Downloading required files and unzipping
+# Proximal mucosa
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR628/003/SRR6288933/SRR6288933_1.fastq.gz #forward reads
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR628/003/SRR6288933/SRR6288933_2.fastq.gz #reverse reads
+
+# Distal lumen
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR628/006/SRR6288926/SRR6288926_1.fastq.gz #forward reads
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/SRR628/006/SRR6288926/SRR6288926_2.fastq.gz #reverse reads
+
+# Bacterial populations
+wget https://ftp.ncbi.nlm.nih.gov/refseq/TargetedLoci/Bacteria/bacteria.16SrRNA.fna.gz
+
+gunzip SRR6288933_1.fastq.gz SRR6288933_2.fastq.gz SRR6288926_1.fastq.gz SRR6288926_2.fastq.gz bacteria.16SrRNA.fna.gz
+ls
+
+## Question 1: How many sequences are present in each of the four FASTQ files before merging? (2/2)
+sed -n '2~4p' SRR6288926_1.fastq | wc -l
+sed -n '2~4p' SRR6288926_2.fastq | wc -l
+sed -n '2~4p' SRR6288933_1.fastq | wc -l
+sed -n '2~4p' SRR6288933_2.fastq | wc -l
+
+## Question 2: After merging the forward and reverse reads for each FASTQ pair, how many sequences are there in each of the resulting two merged FASTQ files? (2/2)
+vsearch --fastq_mergepairs SRR6288926_1.fastq --reverse SRR6288926_2.fastq --fastqout SRR6288926_merged.fastq
+vsearch --fastq_mergepairs SRR6288933_1.fastq --reverse SRR6288933_2.fastq --fastqout SRR6288933_merged.fastq
+
+sed -n '2~4p' SRR6288926_merged.fastq | wc -l
+sed -n '2~4p' SRR6288933_merged.fastq | wc -l
+
+## Question 3. How many unique sequences are present in the PM? (2/2)
+sed -n '2~4p' SRR6288933_merged.fastq | sort -u | wc -l
+
+## Question 4. How many unique species are present in the DL? (2/2)
+sed -n '2~4p' SRR6288926_merged.fastq | sort -u | wc -l
