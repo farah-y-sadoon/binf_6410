@@ -38,3 +38,47 @@ sed -n '2~4p' SRR6288933_merged.fastq | sort -u | wc -l
 
 ## Question 4. How many unique species are present in the DL? (2/2)
 sed -n '2~4p' SRR6288926_merged.fastq | sort -u | wc -l
+
+## Question 5. How many unique sequences are shared between DL and PM sites? (2/2)
+sed -n '2~4p' SRR6288933_merged.fastq | sort -u > SRR6288933_unique_seqs.txt
+sed -n '2~4p' SRR6288926_merged.fastq | sort -u | grep -c -f SRR6288933_unique_seqs.txt
+
+# Checking my work - these numbers should be the same if the command is matching the number of unique sequences
+wc -l SRR6288933_unique_seqs.txt
+sed -n '2~4p' SRR6288933_merged.fastq | sort -u | grep -c -f SRR6288933_unique_seqs.txt
+
+## Question 6. How many unique species are shared between PM and DL sites? (2/2)
+# Run vsearch to find a match for every sequence in each of the files and output the match results to a file
+vsearch --usearch_global SRR6288933_merged.fastq --db bacteria.16SrRNA.fna --blast6out SRR6288933_results1.tsv --id 0.51 --maxhits 1
+vsearch --usearch_global SRR6288926_merged.fastq --db bacteria.16SrRNA.fna --blast6out SRR6288926_results1.tsv --id 0.51 --maxhits 1
+
+# Same thing as above but without truncated labels
+vsearch --usearch_global SRR6288933_merged.fastq --db bacteria.16SrRNA.fna --blast6out SRR6288933_results2.tsv --id 0.51 --maxhits 1 --notrunclabels
+vsearch --usearch_global SRR6288926_merged.fastq --db bacteria.16SrRNA.fna --blast6out SRR6288926_results2.tsv --id 0.51 --maxhits 1 --notrunclabels
+
+# Inspect head/tail of how many times each unique species appears in PM and DL
+cut -f2 SRR6288933_results2.tsv | cut -d' ' -f2-3 | sort | uniq -c | sort -nr | head -5
+cut -f2 SRR6288933_results2.tsv | cut -d' ' -f2-3 | sort | uniq - c} sort -nr | tail -5
+
+cut -f2 SRR6288926_results2.tsv | cut -d' ' -f2-3 | sort | uniq -c | sort -nr | head -5
+cut -f2 SRR6288926_results2.tsv | cut -d' ' -f2-3 | sort | uniq - c} sort -nr | tail -5
+
+# Cut out unique species from each file and direct to a new file
+cut -f2 SRR6288933_results2.tsv | cut -d' ' -f2-3 | sort -u - > SRR6288933_unique_taxa.txt
+cut -f2 SRR6288926_results2.tsv | cut -d' ' -f2-3 | sort -u - > SRR6288926_unique_taxa.txt
+
+# Look for matches in lines between the two unique taxa files and count how many lines match between them
+grep -c -f SRR6288933_unique_taxa.txt SRR6288926_unique_taxa.txt
+
+## Question 7. How many unique species are exclusively present in PM but not in DL? (2/2)
+grep -vcf SRR6288926_unique_taxa.txt SRR6288933_unique_taxa.txt
+
+## Question 8. What is the most abundant species in PM and how many sequence reads of it were detected?
+(2/2)
+cut -f2 SRR6288933_results2.tsv | cut -d' ' -f2-3 | sort | uniq -c | sort -nr | head -n1
+
+## Question 9. How many query sequences in PM matched to a database reference at exactly, or less than 98.7% identity? Reminder: the % identity column is the 3rd column in a typical blast-formatted results table. (2/2)
+cut -f3 SRR6288933_results2.tsv | egrep SOME REGEX HERE
+
+PM = 933
+DL = 926
