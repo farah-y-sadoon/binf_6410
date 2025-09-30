@@ -1,0 +1,151 @@
+### Lecture 08 Notes
+
+# View permissions on file temp
+touch temp
+ls -l
+
+# View groups of users
+groups
+# View permissions on directory temp_dir/
+mkdir temp_dir/
+ls -l
+
+## Make a file and change permissions
+touch permissions1.txt
+ls -l
+
+# give the user execute permissions
+chmod u+x permissions1.txt
+ls -l
+
+# take the read permissions from the group away
+chmod g-r permissions1.txt
+ls -l
+
+# add write permissions for others
+chmod o+w permissions1.txt
+ls -l
+
+# all = all users, groups, other
+chmod a-w permissions1.txt
+
+# change mulitple permissions at once
+chmod u=rwx,g=rx,o=r permissions1.txt
+
+# there are numeric methods for files
+# 4 = read
+# 2 = write
+# 1 = execute
+# 0 = no permission
+
+# below, gives user all permission, group can read and write, and others can read
+chmod 754 permissions1.txt
+mkdir permissions_dir
+
+#changing permissions on a directory requires you to do it recursively with -R
+chmod –R 754 permissions_dir/
+
+## Executing a shell script
+wget https://raw.githubusercontent.com/bdaisley/BINF6410_F25/refs/heads/main/accessory_files/script1.sh
+source script1.sh
+script1.sh
+#!/bin/bash
+echo -e “Hello Master $USER, how may I serve you today?”
+script1.sh
+~/binf_class/lecture_08/script1.sh
+./script.sh
+
+source script1.sh
+script1.sh
+#!/bin/bash
+echo -e “Hello Master $USER, how may I serve you today?”
+script1.sh
+~/binf_class/lecture_08/script1.sh
+./script.sh
+
+# change permission to be able to execute this
+source script1.sh
+script1.sh
+#!/bin/bash
+echo -e “Hello Master $USER, how may I serve you today?”
+script1.sh # doesn't work because you need to specify the path
+
+
+export PATH=$PATH:~/binf_6410/lec_08/script1.sh
+script1.sh # now this runs from everywhere
+
+#to look for where the script lives
+which script1
+
+## View hidden files
+ls -a
+
+# make a backup of the file
+export PATH=$PATH:~/binf_6410/lec_08
+cp.bashrc .bashrc_backup
+script1.sh # this allows us now to run this script file anywhere any time, now it is permanently executable
+
+## Standard error
+# make files and print them to standard output
+echo"Hello there" > temp_hello
+echo"Goodbye" > temp_bye
+grep "Goodbye" < temp_bye
+cat temp_hello temp_bye
+
+#if we make an error, it prints the thing we did correctly but gives you a standard error for the thing you didn't do right
+cat temp_hello temp_bye_bye
+Hello there
+cat: temp_bye_bye: No such file or directory
+
+# we can redirect an error to a file called errors:
+cat temp_hello temp_bye_bye 2> errors
+
+# redirecting errors into temp_hello_bye
+cat temp_hello temp_bye_bye 2> errors > temp_hello_bye #nothing outputs because everything is directed to a file
+
+# &> combines sterr and stdout into one file:
+cat temp_hello temp_bye_bye &> combined # useful for troubleshooting
+cat combined
+
+# get rid of errors entirely and redirect to /dev/null, then redirect what worked to be printed to temp_hello_bye
+cat temp_hello temp_bye_bye 2> /dev/null > temp_hello_bye
+
+# keep only the errors
+cat temp_hello temp_bye_bye 2> errors > /dev/null # to print out an error file to give you the errors to traceback what lines didn't work
+
+## redirect and appending a target file
+echo "Hello" > output.txt
+echo "World" > output.txt
+cat output.txt
+
+# >> appends
+echo "Hello" > output.txt
+echo "World" >> output.txt
+cat output.txt
+
+## Making a VSEARCH script
+wget https://raw.githubusercontent.com/bdaisley/BINF6410_F25/refs/heads/main/accessory_files/script2.sh && chmod +x script2.sh
+script2.sh SRR20011368
+script2.sh SRR20011266
+
+## Script2
+script2.sh
+#!/bin/bash
+#Usage: script2.sh <SRR accession>
+#Example: script2.sh SRR20011368
+mkdir -p ~/binf_class/lecture_08 && cd ~/binf_6410/lec_08
+SRR=$1 #Capture first input
+SRR1=$(echo $1 | cut -c1-3)
+SRR2=$(echo $1 | cut -c4-6)
+SRR3=$(echo $1 | cut -c7-9)
+SRR4=$(echo $1 | cut -c10-11)
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/${SRR1}${SRR2}/0${SRR4}/${SRR}/${SRR}_1.fastq.gz && gunzip -f ${SRR}_1.fastq.gz
+wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/${SRR1}${SRR2}/0${SRR4}/${SRR}/${SRR}_2.fastq.gz && gunzip -f ${SRR}_2.fastq.gz
+vsearch --fastq_mergepairs ${SRR}_1.fastq --reverse ${SRR}_2.fastq --fastqout ${SRR}_merged.fastq
+wget https://ftp.ncbi.nlm.nih.gov/refseq/TargetedLoci/Fungi/fungi.ITS.fna.gz && gunzip -f fungi.ITS.fna.gz
+vsearch --usearch_global ${SRR}_merged.fastq --db fungi.ITS.fna --blast6out ${SRR}_results.tsv --id 0.51 --maxhits 1 --notrunclabels
+COUNTS=$(cut -f2 ${SRR}_results.tsv | cut -d' ' -f2-3 | sort | uniq -c | sort -n | grep 'Ascosphaera apis' | sed -E 's/ +/\t/g' | cut -f2)
+echo -e "${SRR}\t${COUNTS}" #Print to stdout
+echo -e "${SRR}\t${COUNTS}" > script2_output.tsv
+
+#Question: How would you combine the outputs together when running this script back to back with different SRR accessions?
