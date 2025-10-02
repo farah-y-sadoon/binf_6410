@@ -73,10 +73,10 @@ grep -cf SRR6288926_unique_seqs.txt SRR6288933_unique_seqs.txt
 
 ## Question 6. How many unique species are shared between PM and DL sites? (2/2)
 # Look for matches in lines between the two unique taxa files and count how many lines match between them
-grep -c -f SRR6288933_unique_taxa.txt SRR6288926_unique_taxa.txt
+grep -cF -f SRR6288933_unique_taxa.txt SRR6288926_unique_taxa.txt
 
 ## Question 7. How many unique species are exclusively present in PM but not in DL? (2/2)
-grep -vcf SRR6288926_unique_taxa.txt SRR6288933_unique_taxa.txt
+grep -vcF -f SRR6288926_unique_taxa.txt SRR6288933_unique_taxa.txt
 
 ## Question 8. What is the most abundant species in PM and how many sequence reads of it were detected?
 (2/2)
