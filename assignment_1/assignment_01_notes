@@ -78,7 +78,8 @@ grep -vcf SRR6288926_unique_taxa.txt SRR6288933_unique_taxa.txt
 cut -f2 SRR6288933_results2.tsv | cut -d' ' -f2-3 | sort | uniq -c | sort -nr | head -n1
 
 ## Question 9. How many query sequences in PM matched to a database reference at exactly, or less than 98.7% identity? Reminder: the % identity column is the 3rd column in a typical blast-formatted results table. (2/2)
-cut -f3 SRR6288933_results2.tsv | egrep SOME REGEX HERE
+cut -f3 SRR6288933_results2.tsv | egrep '^([0-8][0-9]\.[0-9]|[9][0-7]\.[0-9]|[9][8]\.[0-7])$' | wc -l
 
-PM = 933
-DL = 926
+## Question 10. Consider a scenario where you’re comparing “Species A” abundance across two samples. The
+FASTQ of “Sample 1” contains 1000 reads, while the FASTQ of “Sample 2” contains 2000 reads. Why would it be
+incorrect to assume that Sample 2 has a higher abundance of “Species A” than Sample 1? (2/2)
