@@ -1,0 +1,165 @@
+### Lecture 09
+
+## From last lecture
+# Q: How would you combine the outputs together when running this script back to back with different SRR accessions?
+# you can make a second output file
+# you could rm the file before the script
+# you could append using >>
+
+## Today
+# Reminder - if you use wget on the same link, it will make duplicates rather than replicate. So you should use curl or option -O to overwrite existing file
+
+
+## For loops:
+for i in hello 1 "*" 2 goodbye
+do
+done
+echo "Looping ... i is set to $i"
+
+# use brace expansion .. for ranges and second .. for setting interval
+for variable in {1..10}
+do echo $variable
+done
+
+for variable in {1..10..2}
+do echo $variable
+done
+
+# can do it with letters / characters also
+for variable in {a..f}
+do echo $variable
+done
+
+# can use seq also but not for characters
+seq 1 10
+seq a f # this doesn't work
+
+for variable in $(seq 1 2 10) # here, because we're using seq with () and not {}, 1 = start, 2 = interval, 10 = end
+do echo $variable
+done
+
+## Looping through files
+wget https://raw.githubusercontent.com/bdaisley/BINF6410_F25/refs/heads/main/accessory_files/superheroes.txt && cp superheroes.txt antiheroes.txt
+for FILE in s* #searching in files starting with s
+do
+echo "Searching" $FILE # sanity check to make sure its looking at the right file
+
+# use the append because every time this loops through the file, it's going to replace what's in the file
+grep "Superman" $FILE >> all_superheroes.txt $ looks for Superman in the file specified
+done
+
+cat all_superheroes.txt # every time you run this loop because we used append, it's going duplicate result so be aware of this
+
+# STRUCTURE OF FOR LOOPS TO BE USING (BEST PRACTICE)
+#for OUTPUT in $(Unix-Command-Here); do
+#command1 on $OUTPUT
+#command2 on $OUTPUT
+#...
+#done
+
+## Looping through commands
+for i in $(ls *.txt); do
+echo "The directory has these text files: $i"
+echo "Thank you"
+done
+
+# don't necessarily need the (ls), can be more direct using the wildcard
+for i in *.txt; do
+echo "The directory has these text files: $i"
+echo "Thank you"
+done
+
+#comparing samples
+wget https://raw.githubusercontent.com/bdaisley/BINF6410_F25/refs/heads/main/accessory_files/sample1.txt
+wget https://raw.githubusercontent.com/bdaisley/BINF6410_F25/refs/heads/main/accessory_files/ sample2.txt
+wget https://raw.githubusercontent.com/bdaisley/BINF6410_F25/refs/heads/main/accessory_files/sample3.txt
+
+#counting number of species in common relative to sample1.txt
+for i in $(ls sample*.txt); do
+echo $i
+grep -c -f $i sample1.txt
+done
+
+#if you have any special characters in your file, you want to use -F option for grep (you want to interpret it as a fixed string, even when there are metacharacters)
+for i in $(ls sample*.txt); do
+echo $i
+grep -c -F -f $i sample1.txt
+done
+
+## Looping through downloads
+wget 'https://www.ebi.ac.uk/ena/portal/api/filereport?accession=PRJNA856341&result=read_run&fields=study_accession,run_accession,experiment_alias,fastq_ftp&format=tsv&download=true&limit=0' -O tsv_report.tsv
+
+# inspecting file
+cat tsv_report.tsv
+
+# looking at specific elements of interest (the links to download)
+grep -E 'W0_NTC' tsv_report.tsv
+grep -E 'W0_NTC' tsv_report.tsv | cut -f4
+grep -E 'W0_NTC' tsv_report.tsv | cut -f4 | cut -d';' -f1
+grep -E 'W0_NTC' tsv_report.tsv | cut -f4 | cut-d';' -f2
+
+# We can use a loop to download a bunch of files
+# you could also redirect the files from the command above into a single file with all the download links, then just iterate through the single file
+for i in $(echo $(grep -E 'W0_NTC' tsv_report.tsv | cut -f4 | cut -d';' -f1
+) $(grep -E 'W0_NTC' tsv_report.tsv | cut -f4 | cut -d';' -f2 ) ); do
+echo "Downloading: $i"
+wget $i
+sleep 2 # sleep is so that you're not overloading the server / doing too much too fast
+done
+
+## While loops
+count=5
+while [ $count -ge 0 ]; do
+if [ $count -ne 0 ]; then
+echo "Countdown: $count"
+else
+echo "Blastoff!"
+fi
+count=$((count - 1))
+done
+
+#if you move the count, it runs forever because the condition continues to be true
+count=5
+while [ $count -ge 0 ]; do
+if [ $count -ne 0 ]; then
+echo "Countdown: $count"
+count=$((count - 1))
+else
+echo "Blastoff!"
+fi
+done
+
+# While loops with user input
+echo "Type 'quit' to exit."
+
+while true; do
+read -p "Hello! I am chatBeeBOOp v0.001, a peak performance
+artificial intelligence calculator. There is no AI smarter. Give me
+any math equation and I’ll solve it: " input
+if [ "$input" = "quit" ]; then
+echo "Goodbye!"
+break
+fi
+echo "You typed: $input"
+echo "The answer is: $RANDOM"
+sleep 3
+done
+
+# Comparison Operators
+# -eq Equal to
+# -ne Not equal to
+# -lt Less than
+# -le Less than or equal to
+# -gt Greater than
+# -ge Greater than or equal
+
+# Other Operators
+# [-e file.txt ] → file exists (any type: regular, dir, etc.)
+# [-f file.txt ] → file exists and is a regular file
+# [-d dir/ ] → directory exists
+# [-r file.txt ] → file is readable
+# [-w file.txt ] → file is writable
+# [-x file.txt ] → file is executable
+
+#### Question: How would we make an automated script to download a list SRR files, but skip the ones which we may have already downloaded? (i.e., only download SRR files if we don’t already have them in our directory).
+#### Assume we’re interested in BioProject PRJNA856341 and that we only want NTC samples from Week 0.
